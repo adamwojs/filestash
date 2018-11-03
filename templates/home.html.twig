@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <title>File Stash</title>
+
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <main role="main" class="container mt-5">
+            <header class="mb-5">
+                <h1>FileStash.sh</h1>
+            </header>
+
+            <h2>Basic usage</h2>
+            <h3>Upload</h3>
+            <p>Uploading file using cURL:</p>
+            <p><code>curl --upload-file &lt;FILE&gt; {{ app.request.getSchemeAndHttpHost() }}/&lt;FILE&gt; -u&lt;USER&gt;:&lt;PASS&gt;</code></p>
+            <h3>Download</h3>
+            <p>Downloading file using cURL:</p>
+            <p><code>curl {{ app.request.getSchemeAndHttpHost() }}/&lt;FILE&gt; -u&lt;USER&gt;:&lt;PASS&gt;</code></p>
+
+            <h2>Upload options</h2>
+            <p>Options are passed using HTTP headers <code>-H '&lt;OPTIONS&gt;:&lt;VALUE&gt;'</code>. The following options are supported: </p>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Header</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th><code>x-ttl</code></th>
+                        <td>Time to live (in days).</td>
+                    </tr>
+                    <tr>
+                        <th><code>x-max-downloads</code></th>
+                        <td>Maximum number of downloads.</td>
+                    </tr>
+                    <tr>
+                        <th><code>x-notify</code></th>
+                        <td>E-mail address which will be used for send a notification about upload.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </main><!-- /.container -->
+
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
