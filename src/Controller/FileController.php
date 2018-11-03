@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Exception\FileDownloadLimitException;
 use App\Exception\FileNotFoundException;
 use App\Service\FileOptions;
 use App\Service\FileServiceInterface;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -66,7 +68,9 @@ class FileController
 
             return $response;
         } catch (FileNotFoundException $e) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException($e->getMessage(), $e);
+        } catch (FileDownloadLimitException $e) {
+            throw new GoneHttpException($e->getMessage(), $e);
         }
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\File;
+use App\Exception\FileDownloadLimitException;
 use App\Exception\FileNotFoundException;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,20 +27,26 @@ class FileService implements FileServiceInterface
     /** @var \App\Service\NotificationServiceInterface */
     private $notificationService;
 
+    /** @var \App\Service\DownloadLogServiceInterface */
+    private $downloadLogService;
+
     /**
      * @param \League\Flysystem\FilesystemInterface $filesystem
      * @param \Doctrine\ORM\EntityManagerInterface $em
-     * @param NotificationServiceInterface $notificationService
+     * @param \App\Service\NotificationServiceInterface $notificationService
+     * @param \App\Service\DownloadLogServiceInterface $downloadLogService
      */
     public function __construct(
         FilesystemInterface $filesystem,
         EntityManagerInterface $em,
-        NotificationServiceInterface $notificationService)
+        NotificationServiceInterface $notificationService,
+        DownloadLogServiceInterface $downloadLogService)
     {
         $this->filesystem = $filesystem;
         $this->em = $em;
         $this->repository = $em->getRepository(File::class);
         $this->notificationService = $notificationService;
+        $this->downloadLogService = $downloadLogService;
     }
 
     /**
@@ -97,6 +104,17 @@ class FileService implements FileServiceInterface
             throw new FileNotFoundException($id);
         }
 
-        return $this->filesystem->readStream($file->getPath());
+        if ($file->hasDownloadLimit()) {
+            $count = $this->downloadLogService->getDownloadsCount($file);
+            if ($count >= $file->getMaxDownloads()) {
+                throw new FileDownloadLimitException($id);
+            }
+        }
+
+        $content = $this->filesystem->readStream($file->getPath());
+
+        $this->downloadLogService->create($file);
+
+        return $content;
     }
 }

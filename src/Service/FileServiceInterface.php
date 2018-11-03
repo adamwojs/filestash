@@ -7,7 +7,7 @@ interface FileServiceInterface
     /**
      * @param string $filename
      * @param resource $resource
-     * @param FileOptions $options
+     * @param \App\Service\FileOptions $options
      *
      * @return string
      */
@@ -17,6 +17,7 @@ interface FileServiceInterface
      * @param string $id
      *
      * @throws \App\Exception\FileNotFoundException
+     * @throws \App\Exception\FileDownloadLimitException
      *
      * @return resource
      */
