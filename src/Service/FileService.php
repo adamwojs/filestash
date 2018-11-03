@@ -6,7 +6,6 @@ namespace App\Service;
 
 use App\Entity\File;
 use App\Exception\FileNotFoundException;
-use DateInterval;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -15,10 +14,6 @@ use Ramsey\Uuid\Uuid;
 
 class FileService implements FileServiceInterface
 {
-    public const OPTION_TTL = 'ttl';
-    public const OPTION_MAX_DOWNLOADS = 'max_downloads';
-    public const OPTION_NOTIFY = 'notify';
-
     /** @var \League\Flysystem\FilesystemInterface */
     private $filesystem;
 
@@ -50,7 +45,7 @@ class FileService implements FileServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function save(string $filename, $resource, array $options = []): string
+    public function save(string $filename, $resource, FileOptions $options): string
     {
         $path = Uuid::uuid1()->toString();
 
@@ -61,24 +56,24 @@ class FileService implements FileServiceInterface
         $file->setSize($this->filesystem->getSize($path));
         $file->setMimeType($this->filesystem->getMimetype($path));
 
-        if (isset($options[self::OPTION_TTL]) && $options[self::OPTION_TTL] > 0) {
+        if ($options->hasTtl()) {
             $expiresAt = new DateTime();
             $expiresAt->setTimestamp($file->getCreated()->getTimestamp());
-            $expiresAt->add(new DateInterval(sprintf('P%dD', (int) $options[self::OPTION_TTL])));
+            $expiresAt->add($options->getTtl());
 
             $file->setExpiresAt($expiresAt);
         }
 
-        if (isset($options[self::OPTION_MAX_DOWNLOADS])) {
-            $file->setMaxDownloads((int) $options[self::OPTION_MAX_DOWNLOADS]);
+        if ($options->hasMaxDownloads()) {
+            $file->setMaxDownloads($options->getMaxDownloads());
         }
 
         try {
             $this->em->persist($file);
             $this->em->flush();
 
-            if (isset($options[self::OPTION_NOTIFY])) {
-                $this->notificationService->notify($file, $options[self::OPTION_NOTIFY]);
+            if ($options->hasRecipients()) {
+                $this->notificationService->notify($file, $options->getRecipients());
             }
         } catch (Exception $e) {
             $this->filesystem->delete($path);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Exception\FileNotFoundException;
+use App\Service\FileOptions;
 use App\Service\FileServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -72,6 +73,7 @@ class FileController
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @param string $filename
+     * @param \App\Service\FileOptions $options
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
@@ -79,22 +81,8 @@ class FileController
      *      "filename"=".+"
      * })
      */
-    public function upload(Request $request, string $filename): Response
+    public function upload(Request $request, string $filename, FileOptions $options): Response
     {
-        $options = [];
-
-        if ($request->headers->has(self::HEADER_TTL)) {
-            $options['ttl'] = (int) $request->headers->get(self::HEADER_TTL);
-        }
-
-        if ($request->headers->has(self::HEADER_MAX_DOWNLOADS)) {
-            $options['max_downloads'] = (int) $request->headers->get(self::HEADER_MAX_DOWNLOADS);
-        }
-
-        if ($request->headers->has(self::HEADER_NOTIFY)) {
-            $options['notify'] = explode(',', $request->headers->get(self::HEADER_NOTIFY));
-        }
-
         $id = $this->fileService->save($filename, $request->getContent(true), $options);
 
         $downloadUrl = $this->router->generate('download', [

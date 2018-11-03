@@ -7,11 +7,11 @@ interface FileServiceInterface
     /**
      * @param string $filename
      * @param resource $resource
-     * @param array $options
+     * @param FileOptions $options
      *
      * @return string
      */
-    public function save(string $filename, $resource, array $options = []): string;
+    public function save(string $filename, $resource, FileOptions $options): string;
 
     /**
      * @param string $id

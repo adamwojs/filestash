@@ -26,13 +26,17 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+    App\ArgumentResolver\:
+        resource: '../src/ArgumentResolver'
+        tags:
+            - { name: controller.argument_value_resolver, priority: 50 }
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     App\Service\FileService:
         arguments:
             $filesystem: '@oneup_flysystem.default_filesystem_filesystem'
         public: true
-
 
     App\Service\NotificationService:
         arguments:
