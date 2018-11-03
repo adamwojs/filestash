@@ -2,10 +2,15 @@
 
 namespace App\Service;
 
-use App\Exception\FileNotFoundException;
-
 interface FileServiceInterface
 {
+    /**
+     * @param string $filename
+     * @param resource $resource
+     * @param array $options
+     *
+     * @return string
+     */
     public function save(string $filename, $resource, array $options = []): string;
 
     /**
@@ -15,5 +20,5 @@ interface FileServiceInterface
      *
      * @return resource
      */
-    public function load(string $id);
+    public function getContent(string $id);
 }

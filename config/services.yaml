@@ -33,3 +33,7 @@ services:
             $filesystem: '@oneup_flysystem.default_filesystem_filesystem'
         public: true
 
+
+    App\Service\NotificationService:
+        arguments:
+            $emailTemplate: 'notification_email.html.twig'

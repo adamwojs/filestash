@@ -18,6 +18,7 @@ class FileController
 {
     private const HEADER_TTL = 'x-ttl';
     private const HEADER_MAX_DOWNLOADS = 'x-max-downloads';
+    private const HEADER_NOTIFY = 'x-notify';
 
     /** @var \App\Service\FileServiceInterface */
     private $fileService;
@@ -49,7 +50,7 @@ class FileController
     public function download(Request $request, string $id, string $filename): Response
     {
         try {
-            $stream = $this->fileService->load($id);
+            $stream = $this->fileService->getContent($id);
 
             $response = new StreamedResponse();
             $response->setCallback(function () use ($stream) {
@@ -90,7 +91,11 @@ class FileController
             $options['max_downloads'] = (int) $request->headers->get(self::HEADER_MAX_DOWNLOADS);
         }
 
-        $id = $this->fileService->save($filename, $request->getContent(true));
+        if ($request->headers->has(self::HEADER_NOTIFY)) {
+            $options['notify'] = explode(',', $request->headers->get(self::HEADER_NOTIFY));
+        }
+
+        $id = $this->fileService->save($filename, $request->getContent(true), $options);
 
         $downloadUrl = $this->router->generate('download', [
             'id' => $id,
