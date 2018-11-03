@@ -19,10 +19,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FileController
 {
-    private const HEADER_TTL = 'x-ttl';
-    private const HEADER_MAX_DOWNLOADS = 'x-max-downloads';
-    private const HEADER_NOTIFY = 'x-notify';
-
     /** @var \App\Service\FileServiceInterface */
     private $fileService;
 

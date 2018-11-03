@@ -40,7 +40,7 @@ class FileOptionsResolver implements ArgumentValueResolverInterface
             $maxDownloads = (int)$request->headers->get(self::HEADER_MAX_DOWNLOADS);
         }
 
-        $recipients = (array)$request->headers->get(self::HEADER_NOTIFY, [], false);
+        $recipients = (array)$request->headers->get(self::HEADER_NOTIFY, []);
         $recipients = array_map('trim', $recipients);
         $recipients = array_filter($recipients, function ($recipient) {
             return !empty($recipient);

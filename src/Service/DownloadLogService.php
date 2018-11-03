@@ -26,9 +26,7 @@ class DownloadLogService implements DownloadLogServiceInterface
     }
 
     /**
-     * Created download log entry for given file.
-     *
-     * @param \App\Entity\File $file
+     * {@inheritdoc}
      */
     public function create(File $file): void
     {
@@ -37,10 +35,7 @@ class DownloadLogService implements DownloadLogServiceInterface
     }
 
     /**
-     * Returns number of the downloads for given file.
-     *
-     * @param \App\Entity\File $file
-     * @return int
+     * {@inheritdoc}
      */
     public function getDownloadsCount(File $file): int
     {

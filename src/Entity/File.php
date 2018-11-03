@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -44,16 +45,16 @@ class File
     private $size;
 
     /**
-     * @var DateTimeInterface
+     * @var \DateTimeInterface
      *
-     * @ORM\Column(type="date_immutable")
+     * @ORM\Column(type="datetime_immutable")
      */
     private $created;
 
     /**
-     * @var DateTimeInterface|null
+     * @var \DateTimeInterface|null
      *
-     * @ORM\Column(type="date_immutable", nullable=true)
+     * @ORM\Column(type="datetime_immutable", nullable=true)
      */
     private $expiresAt = null;
 
@@ -115,6 +116,10 @@ class File
 
     public function setCreated(?DateTimeInterface $created): void
     {
+        if ($created instanceof DateTime) {
+            $created = DateTimeImmutable::createFromMutable($created);
+        }
+
         $this->created = $created;
     }
 
@@ -125,7 +130,16 @@ class File
 
     public function setExpiresAt(?DateTimeInterface $expiresAt)
     {
+        if ($expiresAt instanceof DateTime) {
+            $expiresAt = DateTimeImmutable::createFromMutable($expiresAt);
+        }
+
         $this->expiresAt = $expiresAt;
+    }
+
+    public function hasDownloadLimit(): bool
+    {
+        return $this->maxDownloads > 0;
     }
 
     public function getMaxDownloads(): ?int
