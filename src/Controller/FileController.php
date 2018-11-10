@@ -10,7 +10,6 @@ use App\Service\FileOptions;
 use App\Service\FileServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -49,17 +48,14 @@ class FileController
     public function download(Request $request, string $id, string $filename): Response
     {
         try {
-            $stream = $this->fileService->getContent($id);
+            $file = $this->fileService->load($id);
+            $data = $file->getDataStream();
 
             $response = new StreamedResponse();
-            $response->setCallback(function () use ($stream) {
-                echo stream_get_contents($stream);
+            $response->setCallback(function () use ($data) {
+                echo stream_get_contents($data);
             });
-            $response->headers->set('Content-Type', 'application/octet-stream');
-            $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
-                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                $filename
-            ));
+            $response->headers->set('Content-Type', $file->getMimeType());
             $response->prepare($request);
 
             return $response;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\File;
+use App\Entity\File as FileEntity;
 use App\Exception\FileDownloadLimitException;
 use App\Exception\FileNotFoundException;
 use DateTime;
@@ -13,7 +13,7 @@ use Exception;
 use League\Flysystem\FilesystemInterface;
 use Ramsey\Uuid\Uuid;
 
-class FileService implements FileServiceInterface
+class FileService implements FileServiceInterface, FileSystemProxy
 {
     /** @var \League\Flysystem\FilesystemInterface */
     private $filesystem;
@@ -44,7 +44,7 @@ class FileService implements FileServiceInterface
     {
         $this->filesystem = $filesystem;
         $this->em = $em;
-        $this->repository = $em->getRepository(File::class);
+        $this->repository = $em->getRepository(FileEntity::class);
         $this->notificationService = $notificationService;
         $this->downloadLogService = $downloadLogService;
     }
@@ -58,14 +58,14 @@ class FileService implements FileServiceInterface
 
         $this->filesystem->writeStream($path, $resource);
 
-        $file = new File($path);
+        $file = new FileEntity($path);
         $file->setPath($path);
         $file->setSize($this->filesystem->getSize($path));
         $file->setMimeType($this->filesystem->getMimetype($path));
 
         if ($options->hasTtl()) {
             $expiresAt = new DateTime();
-            $expiresAt->setTimestamp($file->getCreated()->getTimestamp());
+            $expiresAt->setTimestamp($file->getCreatedAt()->getTimestamp());
             $expiresAt->add($options->getTtl());
 
             $file->setExpiresAt($expiresAt);
@@ -93,21 +93,29 @@ class FileService implements FileServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getContent(string $id)
+    public function load(string $id): FileInterface
     {
-        $file = $this->repository->find($id);
-        if (null === $file) {
+        $entity = $this->repository->find($id);
+        if (null === $entity) {
             throw new FileNotFoundException($id);
         }
 
-        if (null !== $file->getExpiresAt() && $file->getExpiresAt() > new DateTime()) {
+        if (null !== $entity->getExpiresAt() && $entity->getExpiresAt() > new DateTime()) {
             throw new FileNotFoundException($id);
         }
 
+        return new File($entity, $this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getReadStream(FileEntity $file)
+    {
         if ($file->hasDownloadLimit()) {
             $count = $this->downloadLogService->getDownloadsCount($file);
             if ($count >= $file->getMaxDownloads()) {
-                throw new FileDownloadLimitException($id);
+                throw new FileDownloadLimitException($file->getId());
             }
         }
 

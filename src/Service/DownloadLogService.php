@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\DownloadLogEntry;
 use App\Entity\File;
+use App\Entity\DownloadLogEntry;
 use Doctrine\ORM\EntityManagerInterface;
 
 class DownloadLogService implements DownloadLogServiceInterface

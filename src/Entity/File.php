@@ -49,7 +49,7 @@ class File
      *
      * @ORM\Column(type="datetime_immutable")
      */
-    private $created;
+    private $createdAt;
 
     /**
      * @var \DateTimeInterface|null
@@ -71,7 +71,7 @@ class File
     public function __construct(string $id)
     {
         $this->id = $id;
-        $this->created = new DateTimeImmutable();
+        $this->createdAt = new DateTimeImmutable();
     }
 
     public function getId(): string
@@ -109,18 +109,23 @@ class File
         $this->size = $size;
     }
 
-    public function getCreated(): ?DateTimeInterface
+    public function getCreatedAt(): ?DateTimeInterface
     {
-        return $this->created;
+        return $this->createdAt;
     }
 
-    public function setCreated(?DateTimeInterface $created): void
+    public function setCreatedAt(?DateTimeInterface $createdAt): void
     {
-        if ($created instanceof DateTime) {
-            $created = DateTimeImmutable::createFromMutable($created);
+        if ($createdAt instanceof DateTime) {
+            $createdAt = DateTimeImmutable::createFromMutable($createdAt);
         }
 
-        $this->created = $created;
+        $this->createdAt = $createdAt;
+    }
+
+    public function hasExpiresDate(): bool
+    {
+        return null !== $this->expiresAt;
     }
 
     public function getExpiresAt(): ?DateTimeInterface
