@@ -10,6 +10,7 @@
         "symfony/console": "*",
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "*",
+        "symfony/lock": "*",
         "symfony/orm-pack": "^1.0",
         "symfony/security-bundle": "*",
         "symfony/swiftmailer-bundle": "^3.2",

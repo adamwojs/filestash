@@ -7,9 +7,14 @@ namespace App\Service;
 use App\Entity\File as FileEntity;
 use App\Exception\FileDownloadLimitException;
 use App\Exception\FileNotFoundException;
+use App\Service\ActionListener\PurgeActionListenerInterface;
+use App\Service\ActionListener\NullPurgeActionListener;
 use DateTime;
+use DateTimeImmutable;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use League\Flysystem\FileNotFoundException as FileSystemFileNotFoundException;
 use League\Flysystem\FilesystemInterface;
 use Ramsey\Uuid\Uuid;
 
@@ -124,5 +129,36 @@ class FileService implements FileServiceInterface, FileSystemProxy
         $this->downloadLogService->create($file);
 
         return $content;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function purge(PurgeActionListenerInterface $logger = null): void
+    {
+        if (null === $logger) {
+            $logger = new NullPurgeActionListener();
+        }
+
+        $criteria = Criteria::create();
+        $criteria->where(Criteria::expr()->andX(
+            Criteria::expr()->neq('expiresAt', null),
+            Criteria::expr()->lt('expiresAt', new DateTimeImmutable())
+        ));
+
+        /** @var \App\Entity\File[] $files */
+        $files = $this->repository->matching($criteria);
+        foreach ($files as $file) {
+            $logger->onDelete(new File($file, $this));
+
+            try {
+                $this->filesystem->delete($file->getPath());
+            } catch (FileSystemFileNotFoundException $e) {
+                // File already doesn't exists
+            } finally {
+                $this->em->remove($file);
+                $this->em->flush();
+            }
+        }
     }
 }

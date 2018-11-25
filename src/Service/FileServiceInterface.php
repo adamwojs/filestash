@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use App\Service\ActionListener\PurgeActionListenerInterface;
+
 interface FileServiceInterface
 {
     /**
@@ -22,4 +24,9 @@ interface FileServiceInterface
      * @return string
      */
     public function save(string $filename, $resource, FileOptions $options): string;
+
+    /**
+     * @param \App\Service\ActionListener\PurgeActionListenerInterface|null $logger
+     */
+    public function purge(PurgeActionListenerInterface $logger = null): void;
 }
