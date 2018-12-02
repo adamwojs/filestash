@@ -1,0 +1,26 @@
+language: php
+
+before_install:
+    - composer self-update
+
+install:
+    - composer install
+    - ./bin/phpunit install
+
+matrix:
+    include:
+        -   stage: "Code Quality"
+            name: "Code Style Check"
+            php: 7.1
+            script:
+                - composer run check-cs
+        -   stage: "Test"
+            name: "Unit tests"
+            php: 7.1
+            script:
+                - composer run tests
+
+cache:
+    directories:
+        - $HOME/.composer/cache/files
+        - ./bin/.phpunit
