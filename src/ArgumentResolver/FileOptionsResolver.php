@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\ArgumentResolver;
 
-use App\Service\FileOptions;
+use App\API\FileOptions;
 use DateInterval;
 use Generator;
 use Symfony\Component\HttpFoundation\Request;

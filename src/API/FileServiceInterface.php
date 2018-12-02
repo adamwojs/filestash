@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service;
+namespace App\API;
 
-use App\Service\ActionListener\PurgeActionListenerInterface;
+use App\API\ActionListener\PurgeActionListenerInterface;
 
 interface FileServiceInterface
 {
@@ -12,21 +12,21 @@ interface FileServiceInterface
      * @throws \App\Exception\FileNotFoundException
      * @throws \App\Exception\FileDownloadLimitException
      *
-     * @return \App\Service\FileInterface
+     * @return \App\API\FileInterface
      */
     public function load(string $id): FileInterface;
 
     /**
      * @param string $filename
      * @param resource $resource
-     * @param \App\Service\FileOptions $options
+     * @param \App\API\FileOptions $options
      *
      * @return string
      */
     public function save(string $filename, $resource, FileOptions $options): string;
 
     /**
-     * @param \App\Service\ActionListener\PurgeActionListenerInterface|null $logger
+     * @param \App\API\ActionListener\PurgeActionListenerInterface|null $logger
      */
     public function purge(PurgeActionListenerInterface $logger = null): void;
 }

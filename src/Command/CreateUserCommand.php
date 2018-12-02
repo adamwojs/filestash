@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Service\UserServiceInterface;
+use App\API\UserServiceInterface;
 use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
@@ -18,11 +18,11 @@ class CreateUserCommand extends Command
     private const ARG_PASSWORD = 'password';
     private const ARG_EMAIL = 'email';
 
-    /** @var \App\Service\UserServiceInterface */
+    /** @var \App\API\UserServiceInterface */
     private $userService;
 
     /**
-     * @param \App\Service\UserServiceInterface $userService
+     * @param \App\API\UserServiceInterface $userService
      */
     public function __construct(UserServiceInterface $userService)
     {

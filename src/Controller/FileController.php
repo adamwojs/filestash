@@ -6,8 +6,8 @@ namespace App\Controller;
 
 use App\Exception\FileDownloadLimitException;
 use App\Exception\FileNotFoundException;
-use App\Service\FileOptions;
-use App\Service\FileServiceInterface;
+use App\API\FileOptions;
+use App\API\FileServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -18,14 +18,14 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FileController
 {
-    /** @var \App\Service\FileServiceInterface */
+    /** @var \App\API\FileServiceInterface */
     private $fileService;
 
     /** @var \Symfony\Component\Routing\RouterInterface */
     private $router;
 
     /**
-     * @param \App\Service\FileServiceInterface $fileService
+     * @param \App\API\FileServiceInterface $fileService
      * @param \Symfony\Component\Routing\RouterInterface $router
      */
     public function __construct(FileServiceInterface $fileService, RouterInterface $router)
@@ -69,7 +69,7 @@ class FileController
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @param string $filename
-     * @param \App\Service\FileOptions $options
+     * @param \App\API\FileOptions $options
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *

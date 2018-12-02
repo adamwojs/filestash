@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Service\ActionListener\PurgeActionListenerInterface;
-use App\Service\FileInterface;
-use App\Service\FileServiceInterface;
+use App\API\ActionListener\PurgeActionListenerInterface;
+use App\API\FileInterface;
+use App\API\FileServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,11 +16,11 @@ class PurgeFilesCommand extends Command
 {
     use LockableTrait;
 
-    /** @var \App\Service\FileServiceInterface */
+    /** @var \App\API\FileServiceInterface */
     private $fileService;
 
     /**
-     * @param \App\Service\FileServiceInterface $fileService
+     * @param \App\API\FileServiceInterface $fileService
      */
     public function __construct(FileServiceInterface $fileService)
     {

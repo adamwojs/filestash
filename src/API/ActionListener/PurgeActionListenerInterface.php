@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Service\ActionListener;
+namespace App\API\ActionListener;
 
-use App\Service\FileInterface;
+use App\API\FileInterface;
 
 interface PurgeActionListenerInterface
 {

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use DateTimeInterface;
+use App\API\FileInterface;
 use App\Entity\File as FileEntity;
+use DateTimeInterface;
 
 final class File implements FileInterface
 {
