@@ -9,10 +9,54 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>New file</title>
+
+        <style>
+            table {
+              border-collapse: collapse;
+            }
+
+            td, th {
+                border: 1px solid #000;
+                padding: 3px;
+            }
+        </style>
     </head>
     <body>
         <h1>{{ block('subject') }}</h1>
         <main>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>File ID</th>
+                        <td>{{ file.getId() }}</td>
+                    </tr>
+                    <tr>
+                        <th>File size</th>
+                        <td>{{ file.getSize() }}</td>
+                    </tr>
+                    <tr>
+                        <th>MIME type</th>
+                        <td>{{ file.getMimeType() }}</td>
+                    </tr>
+                    <tr>
+                        <th>Created at</th>
+                        <td>{{ file.getCreatedAt() | date }}</td>
+                    </tr>
+                    {% if file.hasExpiresDate() %}
+                    <tr>
+                        <th>Expires at</th>
+                        <td>{{ file.getExpiresAt() | date }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if file.hasDownloadLimit() %}
+                    <tr>
+                        <th>Download limit</th>
+                        <td>{{ file.getMaxDownloads() }}</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
             {% set url = url('download', {
                 'id': file.id,
                 'filename': file.path
